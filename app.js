@@ -66,6 +66,52 @@ app.post('/new', (req, res) => {
   });
 });
 
+// Read hisaab
+app.get("/files/:filename", (req, res) => {
+  const filename = req.params.filename;
+  fs.readFile(`./files/${filename}`, "utf-8", function (err, data) {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      res.render("hisaab", { data, filename });
+    }
+  });
+});
+
+// Edit page
+app.get('/edit/:filename', (req, res) => {
+  const filename = req.params.filename;
+  fs.readFile(`./files/${filename}`, 'utf-8', (err, data) => {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      res.render('edit', { filename, data });
+    }
+  });
+});
+
+// Update hisaab
+app.post("/update/:filename", (req, res) => {
+  const filename = req.params.filename;
+  fs.writeFile(`./files/${filename}`, req.body.fileData, (err) => {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      res.redirect("/")
+    }
+  });
+})
+
+// Delete hisaab
+app.get("/delete/:filename", (req,res) => {
+  const filename = req.params.filename;
+  fs.unlink(`./files/${filename}`, (err) => {
+    if (err) return res.status(500).send(err.message);
+    res.redirect("/");
+  })
+} )
+
+
 app.listen(3000, () => {
     console.log(`Port is listening on http://localhost:3000`)
 })

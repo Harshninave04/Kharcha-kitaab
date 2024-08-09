@@ -19,10 +19,18 @@ app.get("/", (req, res) => {
   });
 });
 
-// Create Hisaab
 
 app.get("/create", (req, res) => {
     res.render("create")
+})
+
+// create hisaab file
+
+app.post("/new", (req, res) => {
+    fs.writeFile(`./files/${req.body.title}`, req.body.data, (err) => {
+        if (err) return res.status(500).send(err);
+        res.redirect("/")
+    })
 })
 
 

@@ -24,15 +24,47 @@ app.get("/create", (req, res) => {
     res.render("create")
 })
 
-// create hisaab file
 
+// create hisaab file
+/* 
 app.post("/new", (req, res) => {
-    fs.writeFile(`./files/${req.body.title}`, req.body.data, (err) => {
+
+    const currentDate = new Date();
+    const date = `${currentDate.getDate()}-${
+      currentDate.getMonth() + 1
+    }-${currentDate.getFullYear()}`;
+
+    fs.writeFile(`./files/${date}.txt`, req.body.data, (err) => {
         if (err) return res.status(500).send(err);
         res.redirect("/")
     })
 })
+*/
 
+// Create hisaab file with existing name and append counter
+
+app.post('/new', (req, res) => {
+  const currentDate = new Date();
+  const date = `${currentDate.getDate()}-${
+    currentDate.getMonth() + 1
+  }-${currentDate.getFullYear()}`;
+  let fileName = `${date}.txt`;
+  let filePath = path.join(__dirname, 'files', fileName);
+
+  // Check if the file exists and increment the filename if it does
+  let counter = 1;
+  while (fs.existsSync(filePath)) {
+    fileName = `${date}(${counter}).txt`;
+    filePath = path.join(__dirname, 'files', fileName);
+    counter++;
+  }
+
+  // Write the file
+  fs.writeFile(filePath, req.body.data, (err) => {
+    if (err) return res.status(500).send(err);
+    res.redirect('/');
+  });
+});
 
 app.listen(3000, () => {
     console.log(`Port is listening on http://localhost:3000`)
